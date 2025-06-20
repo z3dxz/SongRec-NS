@@ -160,7 +160,13 @@ pub fn cli_main(parameters: CLIParameters) -> Result<(), Box<dyn Error>> {
             GUIMessage::SongRecognized(message) => {
                 let mut last_track_borrow = last_track.borrow_mut();
                 let track_key = Some(message.track_key.clone());
-                let song_name = format!("{} - {}", message.artist_name, message.song_name);
+                let song_name;
+                if let Some(year) = message.release_year.clone() {
+                    song_name = format!("{} - {}^{}", message.artist_name, message.song_name, year);
+                }
+                else {
+                    song_name = format!("{} - {}^0000", message.artist_name, message.song_name);
+                }
 
                 if *last_track_borrow != track_key {
                     #[cfg(feature = "mpris")]
